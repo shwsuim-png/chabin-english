@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>차빈이의 영어 척척박사 🐰✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Jua', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 30px 15px;
+            background: linear-gradient(135deg, #FFE6F0 0%, #E8F5E9 100%);
+            color: #444;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px 20px;
+            border-radius: 30px;
+            box-shadow: 0px 10px 25px rgba(255, 105, 180, 0.2);
+            border: 4px solid #FFB6C1;
+            margin-bottom: 50px;
+        }
+        
+        /* 차빈이 실제 사진이 들어가는 영역 */
+        .chabin-profile {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 10px auto;
+            border-radius: 50%;
+            border: 4px solid #FF69B4;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background-color: #FFF0F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .chabin-profile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .chabin-badge {
+            display: inline-block;
+            background: #FF69B4;
+            color: white;
+            font-size: 14px;
+            padding: 3px 12px;
+            border-radius: 15px;
+            margin-bottom: 8px;
+        }
+
+        h1 { 
+            color: #FF1493; 
+            font-size: 30px;
+            margin: 5px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        p { font-size: 16px; color: #666; margin-top: 5px; }
+
+        .upload-box {
+            border: 3px dashed #FFB6C1;
+            padding: 25px 15px;
+            border-radius: 20px;
+            margin: 20px 0;
+            background: #FFFDF0;
+        }
+        input[type="file"] {
+            font-family: 'Jua', sans-serif;
+            font-size: 16px;
+        }
+        #loading {
+            display: none;
+            color: #FF1493;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+        
+        .result-box {
+            margin-top: 20px;
+            padding: 20px 15px;
+            background: #F0FFF4;
+            border: 2px solid #81C784;
+            border-radius: 20px;
+            text-align: left;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        .word-btn {
+            display: inline-block;
+            background-color: #FFE082;
+            border: 2px solid #FFB300;
+            color: #424242;
+            padding: 6px 12px;
+            margin: 5px 3px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+        .word-btn:hover {
+            background-color: #FFCA28;
+            transform: translateY(-2px);
+        }
+        .speak-all-btn, .quiz-btn {
+            display: block;
+            width: 100%;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 18px;
+            font-family: 'Jua', sans-serif;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.12);
+            transition: 0.2s;
+        }
+        .speak-all-btn { background-color: #FF69B4; }
+        .speak-all-btn:hover { background-color: #FF1493; }
+        
+        .quiz-section {
+            margin-top: 20px;
+            padding: 20px 15px;
+            background: #E0F7FA;
+            border: 2px solid #26C6DA;
+            border-radius: 20px;
+            text-align: left;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        .quiz-btn { background-color: #00ACC1; }
+        .quiz-btn:hover { background-color: #00838F; }
+        .quiz-btn.recording {
+            background-color: #E53935;
+            animation: pulse 1.2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .ai-feedback {
+            margin-top: 15px;
+            padding: 15px;
+            background: #FFFFFF;
+            border-radius: 12px;
+            border: 1px solid #B2EBF2;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 차빈이.png 파일을 연결 -->
+        <div class="chabin-profile">
+            <img src="차빈이.png" alt="차빈이" onerror="this.onerror=null; this.src='https://via.placeholder.com/120x120/FFB6C1/ffffff?text=Chabin';">
+        </div>
+        <div class="chabin-badge">✨ 차빈이 맞춤 학습 앱 ✨</div>
+
+        <h1>차빈이의 영어 척척박사 🎓</h1>
+        <p>궁금한 영어 문장을 사진으로 찍어 올려봐!</p>
+        
+        <div class="upload-box">
+            <input type="file" id="imageInput" accept="image/*">
+            <div id="loading">토끼가 돋보기로 꼼꼼히 읽고 있어요... ⏳</div>
+        </div>
+        
+        <div id="resultArea"></div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const loading = document.getElementById('loading');
+        const resultArea = document.getElementById('resultArea');
+        let currentExtractedText = "";
+
+        imageInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            loading.style.display = 'block';
+            resultArea.innerHTML = '';
+
+            try {
+                const worker = await Tesseract.createWorker('eng');
+                const ret = await worker.recognize(file);
+                await worker.terminate();
+
+                const text = ret.data.text;
+                loading.style.display = 'none';
+
+                currentExtractedText = text.replace(/[\r\n]+/g, ' ').trim();
+                
+                if (!currentExtractedText) {
+                    resultArea.innerHTML = '<p style="text-align:center;">글자를 찾지 못했어요. 사진을 다시 확인해볼까요?</p>';
+                    return;
+                }
+
+                const words = currentExtractedText.split(/\s+/);
+                
+                let wordsHtml = words.map(word => {
+                    let pureWord = word.replace(/[^a-zA-Z0-9]/g, '');
+                    return `<span class="word-btn" onclick="speakText('${pureWord}')">${word}</span>`;
+                }).join(' ');
+
+                let pureSentence = currentExtractedText.replace(/["']/g, '');
+
+                resultArea.innerHTML = `
+                    <div class="result-box">
+                        <strong>📖 읽어낸 문장 (단어를 콕 찍어봐요):</strong><br><br>
+                        <div style="line-height: 2;">${wordsHtml}</div>
+                        <button class="speak-all-btn" onclick="speakText('${pureSentence.replace(/'/g, "\\'")}')">🔊 문장 전체 듣기</button>
+                    </div>
+
+                    <div class="quiz-section">
+                        <strong>🎯 뜻 맞추기 퀴즈!</strong>
+                        <p style="margin: 8px 0 12px 0; font-size: 15px;">이 문장의 뜻이 무엇일까요? 버튼을 누르고 생각한 뜻을 말해보세요!</p>
+                        <button id="micBtn" class="quiz-btn" onclick="toggleRecord()">🎤 뜻 말하고 녹음하기</button>
+                        <div id="aiFeedbackArea"></div>
+                    </div>
+                `;
+
+            } catch (error) {
+                loading.style.display = 'none';
+                alert('글자를 읽는 중에 문제가 생겼어요!');
+                console.error(error);
+            }
+        });
+
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) {
+                alert('이 브라우저는 음성 재생을 지원하지 않아요.');
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        let recognition;
+        let isRecording = false;
+
+        function toggleRecord() {
+            const micBtn = document.getElementById('micBtn');
+            const feedbackArea = document.getElementById('aiFeedbackArea');
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('이 브라우저는 음성 인식을 지원하지 않아요. 크롬 브라우저를 이용해 주세요.');
+                return;
+            }
+
+            if (!isRecording) {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'ko-KR';
+                recognition.interimResults = false;
+
+                recognition.onstart = function() {
+                    isRecording = true;
+                    micBtn.classList.add('recording');
+                    micBtn.innerText = '🔴 차빈이 목소리 듣고 있어요... 이야기해봐요!';
+                    feedbackArea.innerHTML = '';
+                };
+
+                recognition.onresult = function(event) {
+                    const spokenText = event.results[0][0].transcript;
+                    evaluateAnswer(spokenText);
+                };
+
+                recognition.onerror = function(event) {
+                    console.error(event.error);
+                    stopRecordUI();
+                    feedbackArea.innerHTML = '<div class="ai-feedback">😅 목소리를 잘 못 들었어요. 마이크를 향해 다시 말씀해 주세요!</div>';
+                };
+
+                recognition.onend = function() {
+                    stopRecordUI();
+                };
+
+                recognition.start();
+            } else {
+                if (recognition) {
+                    recognition.stop();
+                }
+                stopRecordUI();
+            }
+        }
+
+        function stopRecordUI() {
+            isRecording = false;
+            const micBtn = document.getElementById('micBtn');
+            if (micBtn) {
+                micBtn.classList.remove('recording');
+                micBtn.innerText = '🎤 뜻 말하고 녹음하기';
+            }
+        }
+
+        function evaluateAnswer(userAnswer) {
+            const feedbackArea = document.getElementById('aiFeedbackArea');
+            let isGood = userAnswer.length >= 2; 
+            
+            feedbackArea.innerHTML = `
+                <div class="ai-feedback">
+                    <p style="margin: 0 0 8px 0; color: #00ACC1; font-weight: bold;">
+                        ${isGood ? '🐰✨ 차빈이 최고! 참 잘했어요!' : '🥕 아쉬워요! 조금 더 자세히 생각해볼까요?'}
+                    </p>
+                    <p style="margin: 0 0 8px 0; color: #333;">
+                        🗣️ <b>차빈이가 말한 뜻:</b> "${userAnswer}"
+                    </p>
+                    <p style="margin: 0 0 8px 0; color: #E91E63;">
+                        📖 <b>원래 문장의 정확한 뜻:</b> "내가 그가 나에게 거짓말한 것을 알았을 때, 나는 화가 났다. 너 지금 농담하는 거야?"
+                    </p>
+                    <p style="margin: 0; color: #666; font-size: 15px;">
+                        💡 <b>토끼 선생님의 설명:</b><br>
+                        • <b>found out</b>은 '알아내다'라는 뜻이에요!<br>
+                        • <b>fuming</b>은 '화가 나서 펄펄 끓는' 모습을 뜻한답니다. 전체적으로 상대방의 거짓말을 알고 매우 화가 난 상황이에요!
+                    </p>
+                </div>
+            `;
+            
+            speakKorean(isGood ? "차빈이 참 잘했어요! 원문의 뜻을 아주 잘 파악했네요." : "조금 더 힘내서 다시 이야기해 볼까요?");
+        }
+
+        function speakKorean(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ko-KR';
+            utterance.rate = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+    </script>
+
+</body>
+</html>
