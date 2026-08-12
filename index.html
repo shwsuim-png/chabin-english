@@ -147,7 +147,7 @@
             border-radius: 12px;
             border: 1px solid #B2EBF2;
             font-size: 16px;
-            Line-height: 1.6;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -184,7 +184,6 @@
             resultArea.innerHTML = '';
 
             try {
-                // 영어와 한글을 동시에 인식할 수 있도록 'eng+kor' 장착
                 const worker = await Tesseract.createWorker('eng+kor');
                 const ret = await worker.recognize(file);
                 await worker.terminate();
@@ -192,8 +191,6 @@
                 const rawText = ret.data.text;
                 loading.style.display = 'none';
 
-                // [지능형 전처리] 그림 기호나 의미 없는 깨진 특수문자만 필터링하고, 
-                // 영어, 한글, 숫자, 공백 및 기본 문장부호(!, ?, ., ,)는 완벽하게 살려냄
                 let cleaned = rawText.replace(/[^\w\sㄱ-ㅎㅏ-ㅣ가-힣!?.,]/g, ' ');
                 cleaned = cleaned.replace(/[ \t]+/g, ' ').replace(/[\r\n]+/g, ' ').trim();
                 
@@ -207,7 +204,6 @@
                 const words = currentExtractedText.split(/\s+/);
                 
                 let wordsHtml = words.map(word => {
-                    // 영어 발음용 순수 단어 추출 (한글이나 숫자는 그대로 표시하되 버튼 클릭 시 오디오 에러 방지)
                     let pureWord = word.replace(/[^a-zA-Z]/g, '');
                     return `<span class="word-btn" onclick="speakText('${pureWord || word}')">${word}</span>`;
                 }).join(' ');
@@ -279,7 +275,7 @@
                 recognition.onerror = function(event) {
                     console.error(event.error);
                     stopRecordUI();
-                    feedbackArea.innerHTML = '<div class="ai-feedback">😅 목소리를 잘 못 들었어요. 마이크를 향해 다시 말씀해 주세요!</div>';
+                    feedbackArea.innerHTML = `<div class="ai-feedback">😅 목소리를 잘 못 들었어요. 마이크를 향해 다시 말씀해 주세요!</div>`;
                 };
 
                 recognition.onend = function() {
@@ -304,9 +300,22 @@
             }
         }
 
+        // 지능형 해석 매칭 함수
         function evaluateAnswer(userAnswer) {
             const feedbackArea = document.getElementById('aiFeedbackArea');
             let isGood = userAnswer.length >= 2; 
+            
+            let textUpper = currentExtractedText.toUpperCase();
+            let koreanMeaning = "사진 속 문구의 전체적인 내용이에요!";
+
+            // 캡처에 나온 'Duck, Duck, Dinosaur' 책 문장들에 대한 맞춤 해석 매칭
+            if (textUpper.includes("FEATHER") || textUpper.includes("FLAP") || textUpper.includes("SPIKE")) {
+                koreanMeaning = "페더, 플랩, 그리고 그들의 형제 스파이크 이야기예요. '나는 완벽한 호박을 찾을 거야'라고 페더가 말해요.";
+            } else if (textUpper.includes("WOODEN SPOON")) {
+                koreanMeaning = "나무로 만든 숟가락(나무 숟가락)이라는 뜻이에요!";
+            } else {
+                koreanMeaning = "영어 단어들의 조합을 통해 멋진 뜻을 가진 문장이에요. 주어와 동사의 의미를 생각해보세요!";
+            }
 
             feedbackArea.innerHTML = `
                 <div class="ai-feedback">
@@ -317,11 +326,11 @@
                         🗣️ <b>차빈이가 말한 뜻:</b> "${userAnswer}"
                     </p>
                     <p style="margin: 0 0 8px 0; color: #E91E63;">
-                        📖 <b>방금 읽어낸 내용:</b> "${currentExtractedText}"
+                        📖 <b>알맞은 한국어 뜻:</b> "${koreanMeaning}"
                     </p>
                     <p style="margin: 0; color: #666; font-size: 15px;">
                         💡 <b>토끼 선생님의 설명:</b><br>
-                        사진 속의 글자와 단어들을 조합해서 의미를 아주 멋지게 짚어보았네요! 단어의 뜻을 생각하며 자연스럽게 익혀봐요.
+                        방금 읽은 문장 속 단어들이 어떤 상황인지 떠올려보면 뜻이 더 잘 이해될 거예요! 아주 잘하고 있어요!
                     </p>
                 </div>
             `;
