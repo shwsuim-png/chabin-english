@@ -191,7 +191,6 @@
                 const rawText = ret.data.text;
                 loading.style.display = 'none';
 
-                // [개선된 전처리] 영어 알파벳, 숫자, 공백, 그리고 느낌표(!), 물음표(?), 마침표(.), 쉼표(,)만 허용하고 나머지는 제거
                 const cleanedText = rawText.replace(/[^a-zA-Z0-9\s!?.,]/g, ' ').replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
                 
                 currentExtractedText = cleanedText;
@@ -205,7 +204,7 @@
                 
                 let wordsHtml = words.map(word => {
                     return `<span class="word-btn" onclick="speakText('${word}')">${word}</span>`;
-                }).join(' ');
+                }).join(' ').replace(/['"]/g, '');
 
                 resultArea.innerHTML = `
                     <div class="result-box">
@@ -299,6 +298,7 @@
             }
         }
 
+        // [수정된 부분] 고정된 문장 대신, 사진에서 실시간으로 읽어낸 문장(currentExtractedText)을 기반으로 피드백 생성
         function evaluateAnswer(userAnswer) {
             const feedbackArea = document.getElementById('aiFeedbackArea');
             let isGood = userAnswer.length >= 2; 
@@ -306,23 +306,22 @@
             feedbackArea.innerHTML = `
                 <div class="ai-feedback">
                     <p style="margin: 0 0 8px 0; color: #00ACC1; font-weight: bold;">
-                        ${isGood ? '🐰✨ 차빈이 최고! 참 잘했어요!' : '🥕 아쉬워요! 조금 더 자세히 생각해볼까요?'}
+                        ${isGood ? '🐰✨ 차빈이 최고! 멋진 시도였어요!' : '🥕 아쉬워요! 조금 더 자신 있게 말해볼까요?'}
                     </p>
                     <p style="margin: 0 0 8px 0; color: #333;">
                         🗣️ <b>차빈이가 말한 뜻:</b> "${userAnswer}"
                     </p>
                     <p style="margin: 0 0 8px 0; color: #E91E63;">
-                        📖 <b>원래 문장의 정확한 뜻:</b> "내가 그가 나에게 거짓말한 것을 알았을 때, 나는 화가 났다. 너 지금 농담하는 거야?"
+                        📖 <b>방금 찍은 영어 문장:</b> "${currentExtractedText}"
                     </p>
                     <p style="margin: 0; color: #666; font-size: 15px;">
-                        💡 <b>토끼 선생님의 설명:</b><br>
-                        • <b>found out</b>은 '알아내다'라는 뜻이에요!<br>
-                        • <b>fuming</b>은 '화가 나서 펄펄 끓는' 모습을 뜻한답니다. 전체적으로 상대방의 거짓말을 알고 매우 화가 난 상황이에요!
+                        💡 <b>토끼 선생님의 칭찬 가이드:</b><br>
+                        사진으로 찍은 문장을 보고 직접 뜻을 유추해 본 아주 훌륭한 도전이에요! 단어 하나하나의 뜻을 생각하며 문장 전체의 의미를 파악해 보세요.
                     </p>
                 </div>
             `;
             
-            speakKorean(isGood ? "차빈이 참 잘했어요! 원문의 뜻을 아주 잘 파악했네요." : "조금 더 힘내서 다시 이야기해 볼까요?");
+            speakKorean(isGood ? "차빈이 멋진 시도였어요! 참 잘했어요." : "다시 한번 힘내서 이야기해 볼까요?");
         }
 
         function speakKorean(text) {
