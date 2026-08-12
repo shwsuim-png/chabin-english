@@ -147,7 +147,7 @@
             border-radius: 12px;
             border: 1px solid #B2EBF2;
             font-size: 16px;
-            line-height: 1.6;
+            Line-height: 1.6;
         }
     </style>
 </head>
@@ -184,25 +184,18 @@
             resultArea.innerHTML = '';
 
             try {
-                // 영어 전용 고성능 모드로 복원
-                const worker = await Tesseract.createWorker('eng');
+                // 영어와 한글을 동시에 인식할 수 있도록 'eng+kor' 장착
+                const worker = await Tesseract.createWorker('eng+kor');
                 const ret = await worker.recognize(file);
                 await worker.terminate();
 
                 const rawText = ret.data.text;
                 loading.style.display = 'none';
 
-                // 줄바꿈 정돈
-                let cleaned = rawText.replace(/[\r\n]+/g, ' ').trim();
-
-                // 'WOODEN SPOON'처럼 제품 패키지에 흔히 나오는 단어 조합을 스마트하게 정제
-                let upperText = cleaned.toUpperCase();
-                if (upperText.includes("WOODEN") || upperText.includes("SPOON")) {
-                    cleaned = "WOODEN SPOON";
-                } else {
-                    // 일반적인 영어 문장/단어: 알파벳, 숫자, 기본 부호(!, ?, ., ,)만 남기고 불필요한 기호 제거
-                    cleaned = cleaned.replace(/[^a-zA-Z0-9\s!?.,]/g, ' ').replace(/\s+/g, ' ').trim();
-                }
+                // [지능형 전처리] 그림 기호나 의미 없는 깨진 특수문자만 필터링하고, 
+                // 영어, 한글, 숫자, 공백 및 기본 문장부호(!, ?, ., ,)는 완벽하게 살려냄
+                let cleaned = rawText.replace(/[^\w\sㄱ-ㅎㅏ-ㅣ가-힣!?.,]/g, ' ');
+                cleaned = cleaned.replace(/[ \t]+/g, ' ').replace(/[\r\n]+/g, ' ').trim();
                 
                 currentExtractedText = cleaned;
                 
@@ -214,19 +207,21 @@
                 const words = currentExtractedText.split(/\s+/);
                 
                 let wordsHtml = words.map(word => {
-                    return `<span class="word-btn" onclick="speakText('${word}')">${word}</span>`;
+                    // 영어 발음용 순수 단어 추출 (한글이나 숫자는 그대로 표시하되 버튼 클릭 시 오디오 에러 방지)
+                    let pureWord = word.replace(/[^a-zA-Z]/g, '');
+                    return `<span class="word-btn" onclick="speakText('${pureWord || word}')">${word}</span>`;
                 }).join(' ');
 
                 resultArea.innerHTML = `
                     <div class="result-box">
-                        <strong>📖 읽어낸 문장 (단어를 콕 찍어봐요):</strong><br><br>
-                        <div style="line-height: 2;">${wordsHtml}</div>
-                        <button class="speak-all-btn" onclick="speakText('${currentExtractedText.replace(/'/g, "\\'")}')">🔊 문장 전체 듣기</button>
+                        <strong>📖 읽어낸 내용 (단어를 콕 찍어봐요):</strong><br><br>
+                        <div style="line-height: 2.2;">${wordsHtml}</div>
+                        <button class="speak-all-btn" onclick="speakText('${currentExtractedText.replace(/'/g, "\\'")}')">🔊 전체 내용 듣기</button>
                     </div>
 
                     <div class="quiz-section">
                         <strong>🎯 뜻 맞추기 퀴즈!</strong>
-                        <p style="margin: 8px 0 12px 0; font-size: 15px;">이 문장의 뜻이 무엇일까요? 버튼을 누르고 생각한 뜻을 말해보세요!</p>
+                        <p style="margin: 8px 0 12px 0; font-size: 15px;">이 내용의 뜻이 무엇일까요? 버튼을 누르고 생각한 뜻을 말해보세요!</p>
                         <button id="micBtn" class="quiz-btn" onclick="toggleRecord()">🎤 뜻 말하고 녹음하기</button>
                         <div id="aiFeedbackArea"></div>
                     </div>
@@ -309,15 +304,9 @@
             }
         }
 
-        // 실시간으로 읽어낸 단어/문장에 맞춰 피드백을 제공하도록 개선된 함수
         function evaluateAnswer(userAnswer) {
             const feedbackArea = document.getElementById('aiFeedbackArea');
             let isGood = userAnswer.length >= 2; 
-            
-            let explanation = `방금 찍은 <b>"${currentExtractedText}"</b>의 의미를 멋지게 유추해 보았네요!`;
-            if (currentExtractedText.toUpperCase().includes("WOODEN SPOON")) {
-                explanation = `• <b>wooden</b>은 '나무로 만든'이라는 뜻이에요!<br>• <b>spoon</b>은 '숟가락'이니까 합쳐서 <b>'나무 숟가락'</b>이 된답니다!`;
-            }
 
             feedbackArea.innerHTML = `
                 <div class="ai-feedback">
@@ -328,11 +317,11 @@
                         🗣️ <b>차빈이가 말한 뜻:</b> "${userAnswer}"
                     </p>
                     <p style="margin: 0 0 8px 0; color: #E91E63;">
-                        📖 <b>방금 읽은 영어:</b> "${currentExtractedText}"
+                        📖 <b>방금 읽어낸 내용:</b> "${currentExtractedText}"
                     </p>
                     <p style="margin: 0; color: #666; font-size: 15px;">
                         💡 <b>토끼 선생님의 설명:</b><br>
-                        ${explanation}
+                        사진 속의 글자와 단어들을 조합해서 의미를 아주 멋지게 짚어보았네요! 단어의 뜻을 생각하며 자연스럽게 익혀봐요.
                     </p>
                 </div>
             `;
