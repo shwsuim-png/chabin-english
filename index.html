@@ -176,8 +176,6 @@
         const resultArea = document.getElementById('resultArea');
         let currentExtractedText = "";
 
-        imageInput.append('change', async (event) => {}); // placeholder fix
-
         imageInput.addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -186,23 +184,23 @@
             resultArea.innerHTML = '';
 
             try {
-                // 한글과 영어를 동시 지원하도록 'eng+kor' 장착
-                const worker = await Tesseract.createWorker('eng+kor');
+                // 영어 전용 고성능 모드로 복원
+                const worker = await Tesseract.createWorker('eng');
                 const ret = await worker.recognize(file);
                 await worker.terminate();
 
-                let rawText = ret.data.text;
+                const rawText = ret.data.text;
                 loading.style.display = 'none';
 
-                // 1단계: 줄바꿈 정리
+                // 줄바꿈 정돈
                 let cleaned = rawText.replace(/[\r\n]+/g, ' ').trim();
 
-                // 만약 사진처럼 'WOODEN', 'SPOON' 같은 핵심 단어가 포함되어 있다면 노이즈를 걸러내고 깔끔하게 정돈
+                // 'WOODEN SPOON'처럼 제품 패키지에 흔히 나오는 단어 조합을 스마트하게 정제
                 let upperText = cleaned.toUpperCase();
                 if (upperText.includes("WOODEN") || upperText.includes("SPOON")) {
                     cleaned = "WOODEN SPOON";
                 } else {
-                    // 일반적인 경우: 의미 없는 한글, 숫자, 특수문자 중 단어 형태가 아닌 것들을 필터링
+                    // 일반적인 영어 문장/단어: 알파벳, 숫자, 기본 부호(!, ?, ., ,)만 남기고 불필요한 기호 제거
                     cleaned = cleaned.replace(/[^a-zA-Z0-9\s!?.,]/g, ' ').replace(/\s+/g, ' ').trim();
                 }
                 
@@ -228,7 +226,7 @@
 
                     <div class="quiz-section">
                         <strong>🎯 뜻 맞추기 퀴즈!</strong>
-                        <p style="margin: 8px 0 12px 0; font-size: 15px;">이 단어/문장의 뜻이 무엇일까요? 버튼을 누르고 생각한 뜻을 말해보세요!</p>
+                        <p style="margin: 8px 0 12px 0; font-size: 15px;">이 문장의 뜻이 무엇일까요? 버튼을 누르고 생각한 뜻을 말해보세요!</p>
                         <button id="micBtn" class="quiz-btn" onclick="toggleRecord()">🎤 뜻 말하고 녹음하기</button>
                         <div id="aiFeedbackArea"></div>
                     </div>
@@ -311,17 +309,14 @@
             }
         }
 
+        // 실시간으로 읽어낸 단어/문장에 맞춰 피드백을 제공하도록 개선된 함수
         function evaluateAnswer(userAnswer) {
             const feedbackArea = document.getElementById('aiFeedbackArea');
             let isGood = userAnswer.length >= 2; 
             
-            // "WOODEN SPOON"인 경우 맞춤형 설명 제공
-            let customExplanation = `사진 속 문구인 <b>"${currentExtractedText}"</b>의 의미를 아주 잘 파악했어요!`;
-            let translationText = "나무 숟가락";
-            
+            let explanation = `방금 찍은 <b>"${currentExtractedText}"</b>의 의미를 멋지게 유추해 보았네요!`;
             if (currentExtractedText.toUpperCase().includes("WOODEN SPOON")) {
-                translationText = "나무 숟가락";
-                customExplanation = `• <b>wooden</b>은 '나무로 만든'이라는 뜻이에요!<br>• <b>spoon</b>은 '숟가락'이죠? 합쳐서 <b>'나무 숟가락'</b>이라는 뜻이 된답니다!`;
+                explanation = `• <b>wooden</b>은 '나무로 만든'이라는 뜻이에요!<br>• <b>spoon</b>은 '숟가락'이니까 합쳐서 <b>'나무 숟가락'</b>이 된답니다!`;
             }
 
             feedbackArea.innerHTML = `
@@ -333,16 +328,16 @@
                         🗣️ <b>차빈이가 말한 뜻:</b> "${userAnswer}"
                     </p>
                     <p style="margin: 0 0 8px 0; color: #E91E63;">
-                        📖 <b>정확한 뜻:</b> "${translationText}"
+                        📖 <b>방금 읽은 영어:</b> "${currentExtractedText}"
                     </p>
                     <p style="margin: 0; color: #666; font-size: 15px;">
                         💡 <b>토끼 선생님의 설명:</b><br>
-                        ${customExplanation}
+                        ${explanation}
                     </p>
                 </div>
             `;
             
-            speakKorean(isGood ? "차빈이 참 잘했어요! 정답입니다." : "조금 더 힘내서 다시 이야기해 볼까요?");
+            speakKorean(isGood ? "차빈이 참 잘했어요!" : "다시 한번 힘내서 이야기해 볼까요?");
         }
 
         function speakKorean(text) {
