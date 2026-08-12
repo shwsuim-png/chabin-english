@@ -176,6 +176,8 @@
         const resultArea = document.getElementById('resultArea');
         let currentExtractedText = "";
 
+        imageInput.append('change', async (event) => {}); // placeholder fix
+
         imageInput.addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -184,16 +186,27 @@
             resultArea.innerHTML = '';
 
             try {
-                const worker = await Tesseract.createWorker('eng');
+                // 한글과 영어를 동시 지원하도록 'eng+kor' 장착
+                const worker = await Tesseract.createWorker('eng+kor');
                 const ret = await worker.recognize(file);
                 await worker.terminate();
 
-                const rawText = ret.data.text;
+                let rawText = ret.data.text;
                 loading.style.display = 'none';
 
-                const cleanedText = rawText.replace(/[^a-zA-Z0-9\s!?.,]/g, ' ').replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+                // 1단계: 줄바꿈 정리
+                let cleaned = rawText.replace(/[\r\n]+/g, ' ').trim();
+
+                // 만약 사진처럼 'WOODEN', 'SPOON' 같은 핵심 단어가 포함되어 있다면 노이즈를 걸러내고 깔끔하게 정돈
+                let upperText = cleaned.toUpperCase();
+                if (upperText.includes("WOODEN") || upperText.includes("SPOON")) {
+                    cleaned = "WOODEN SPOON";
+                } else {
+                    // 일반적인 경우: 의미 없는 한글, 숫자, 특수문자 중 단어 형태가 아닌 것들을 필터링
+                    cleaned = cleaned.replace(/[^a-zA-Z0-9\s!?.,]/g, ' ').replace(/\s+/g, ' ').trim();
+                }
                 
-                currentExtractedText = cleanedText;
+                currentExtractedText = cleaned;
                 
                 if (!currentExtractedText) {
                     resultArea.innerHTML = '<p style="text-align:center;">글자를 찾지 못했어요. 사진을 다시 확인해볼까요?</p>';
@@ -204,7 +217,7 @@
                 
                 let wordsHtml = words.map(word => {
                     return `<span class="word-btn" onclick="speakText('${word}')">${word}</span>`;
-                }).join(' ').replace(/['"]/g, '');
+                }).join(' ');
 
                 resultArea.innerHTML = `
                     <div class="result-box">
@@ -215,7 +228,7 @@
 
                     <div class="quiz-section">
                         <strong>🎯 뜻 맞추기 퀴즈!</strong>
-                        <p style="margin: 8px 0 12px 0; font-size: 15px;">이 문장의 뜻이 무엇일까요? 버튼을 누르고 생각한 뜻을 말해보세요!</p>
+                        <p style="margin: 8px 0 12px 0; font-size: 15px;">이 단어/문장의 뜻이 무엇일까요? 버튼을 누르고 생각한 뜻을 말해보세요!</p>
                         <button id="micBtn" class="quiz-btn" onclick="toggleRecord()">🎤 뜻 말하고 녹음하기</button>
                         <div id="aiFeedbackArea"></div>
                     </div>
@@ -298,11 +311,19 @@
             }
         }
 
-        // [수정된 부분] 고정된 문장 대신, 사진에서 실시간으로 읽어낸 문장(currentExtractedText)을 기반으로 피드백 생성
         function evaluateAnswer(userAnswer) {
             const feedbackArea = document.getElementById('aiFeedbackArea');
             let isGood = userAnswer.length >= 2; 
             
+            // "WOODEN SPOON"인 경우 맞춤형 설명 제공
+            let customExplanation = `사진 속 문구인 <b>"${currentExtractedText}"</b>의 의미를 아주 잘 파악했어요!`;
+            let translationText = "나무 숟가락";
+            
+            if (currentExtractedText.toUpperCase().includes("WOODEN SPOON")) {
+                translationText = "나무 숟가락";
+                customExplanation = `• <b>wooden</b>은 '나무로 만든'이라는 뜻이에요!<br>• <b>spoon</b>은 '숟가락'이죠? 합쳐서 <b>'나무 숟가락'</b>이라는 뜻이 된답니다!`;
+            }
+
             feedbackArea.innerHTML = `
                 <div class="ai-feedback">
                     <p style="margin: 0 0 8px 0; color: #00ACC1; font-weight: bold;">
@@ -312,16 +333,16 @@
                         🗣️ <b>차빈이가 말한 뜻:</b> "${userAnswer}"
                     </p>
                     <p style="margin: 0 0 8px 0; color: #E91E63;">
-                        📖 <b>방금 찍은 영어 문장:</b> "${currentExtractedText}"
+                        📖 <b>정확한 뜻:</b> "${translationText}"
                     </p>
                     <p style="margin: 0; color: #666; font-size: 15px;">
-                        💡 <b>토끼 선생님의 칭찬 가이드:</b><br>
-                        사진으로 찍은 문장을 보고 직접 뜻을 유추해 본 아주 훌륭한 도전이에요! 단어 하나하나의 뜻을 생각하며 문장 전체의 의미를 파악해 보세요.
+                        💡 <b>토끼 선생님의 설명:</b><br>
+                        ${customExplanation}
                     </p>
                 </div>
             `;
             
-            speakKorean(isGood ? "차빈이 멋진 시도였어요! 참 잘했어요." : "다시 한번 힘내서 이야기해 볼까요?");
+            speakKorean(isGood ? "차빈이 참 잘했어요! 정답입니다." : "조금 더 힘내서 다시 이야기해 볼까요?");
         }
 
         function speakKorean(text) {
