@@ -1,352 +1,301 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>차빈이의 영어 척척박사 🐰✨</title>
-    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-
-    <style>
-        body {
-            font-family: 'Jua', sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 30px 15px;
-            background: linear-gradient(135deg, #FFE6F0 0%, #E8F5E9 100%);
-            color: #444;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 550px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 25px 20px;
-            border-radius: 30px;
-            box-shadow: 0px 10px 25px rgba(255, 105, 180, 0.2);
-            border: 4px solid #FFB6C1;
-            margin-bottom: 50px;
-        }
-        .chabin-profile {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 10px auto;
-            border-radius: 50%;
-            border: 4px solid #FF69B4;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            background-color: #FFF0F5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .chabin-profile img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .chabin-badge {
-            display: inline-block;
-            background: #FF69B4;
-            color: white;
-            font-size: 14px;
-            padding: 3px 12px;
-            border-radius: 15px;
-            margin-bottom: 8px;
-        }
-        h1 { 
-            color: #FF1493; 
-            font-size: 30px;
-            margin: 5px 0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        p { font-size: 16px; color: #666; margin-top: 5px; }
-        .upload-box {
-            border: 3px dashed #FFB6C1;
-            padding: 25px 15px;
-            border-radius: 20px;
-            margin: 20px 0;
-            background: #FFFDF0;
-        }
-        input[type="file"] {
-            font-family: 'Jua', sans-serif;
-            font-size: 16px;
-        }
-        #loading {
-            display: none;
-            color: #FF1493;
-            font-size: 18px;
-            margin-top: 15px;
-        }
-        .result-box {
-            margin-top: 20px;
-            padding: 20px 15px;
-            background: #F0FFF4;
-            border: 2px solid #81C784;
-            border-radius: 20px;
-            text-align: left;
-            font-size: 18px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
-        .word-btn {
-            display: inline-block;
-            background-color: #FFE082;
-            border: 2px solid #FFB300;
-            color: #424242;
-            padding: 6px 12px;
-            margin: 5px 3px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-        }
-        .word-btn:hover {
-            background-color: #FFCA28;
-            transform: translateY(-2px);
-        }
-        .speak-all-btn, .quiz-btn {
-            display: block;
-            width: 100%;
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 18px;
-            font-family: 'Jua', sans-serif;
-            border-radius: 15px;
-            cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.12);
-            transition: 0.2s;
-        }
-        .speak-all-btn { background-color: #FF69B4; }
-        .speak-all-btn:hover { background-color: #FF1493; }
-        .quiz-section {
-            margin-top: 20px;
-            padding: 20px 15px;
-            background: #E0F7FA;
-            border: 2px solid #26C6DA;
-            border-radius: 20px;
-            text-align: left;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
-        .quiz-btn { background-color: #00ACC1; }
-        .quiz-btn:hover { background-color: #00838F; }
-        .quiz-btn.recording {
-            background-color: #E53935;
-            animation: pulse 1.2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-        .ai-feedback {
-            margin-top: 15px;
-            padding: 15px;
-            background: #FFFFFF;
-            border-radius: 12px;
-            border: 1px solid #B2EBF2;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>차빈이의 영어 척척박사 🐰✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{font-family:'Jua',sans-serif;margin:0;padding:24px 14px;background:linear-gradient(135deg,#FFE6F0,#E8F5E9);color:#444;min-height:100vh}
+.container{max-width:680px;margin:auto;background:#fff;padding:24px 18px;border-radius:28px;box-shadow:0 10px 25px rgba(0,0,0,.10);border:4px solid #FFB6C1}
+.profile{width:100px;height:100px;margin:auto;border-radius:50%;overflow:hidden;border:4px solid #FF69B4;background:#FFF0F5;display:flex;align-items:center;justify-content:center}
+.profile img{width:100%;height:100%;object-fit:cover}
+.badge{display:inline-block;background:#FF69B4;color:#fff;padding:4px 12px;border-radius:15px;margin:10px 0 5px}
+h1{color:#FF1493;font-size:29px;margin:5px 0}
+p{color:#666}
+.upload{border:3px dashed #FFB6C1;padding:22px 12px;border-radius:20px;margin:18px 0;background:#FFFDF0}
+button{font-family:inherit;cursor:pointer}
+#loading{display:none;color:#FF1493;margin-top:12px}
+.result{margin-top:18px;padding:18px;background:#F0FFF4;border:2px solid #81C784;border-radius:20px;text-align:left}
+.sentence{padding:12px;background:#fff;border-radius:14px;margin:10px 0;line-height:2.1}
+.word{display:inline-block;background:#FFE082;border:2px solid #FFB300;color:#424242;padding:4px 9px;margin:3px;border-radius:10px;cursor:pointer}
+.word:hover{transform:translateY(-1px)}
+.syllables{margin:8px 0 4px;padding:8px;background:#FFF8E1;border-radius:10px;font-size:15px}
+.syl{display:inline-block;background:#E1F5FE;border:1px solid #29B6F6;padding:3px 7px;margin:2px;border-radius:8px;cursor:pointer}
+.action{width:100%;border:0;padding:13px;font-size:17px;border-radius:14px;color:white;margin-top:10px}
+.listen{background:#FF69B4}.listen:hover{background:#FF1493}
+.quiz{margin-top:18px;padding:18px;background:#E0F7FA;border:2px solid #26C6DA;border-radius:20px;text-align:left}
+.record{background:#00ACC1}.record.recording{background:#E53935;animation:pulse 1.1s infinite}
+.stop{background:#546E7A}
+.transcript{margin-top:12px;padding:12px;background:white;border-radius:12px;min-height:45px}
+.feedback{margin-top:12px;padding:15px;background:white;border-radius:12px;border:1px solid #B2EBF2;line-height:1.65}
+.notice{font-size:13px;color:#777;background:#fafafa;padding:10px;border-radius:10px;margin-top:10px}
+.error{color:#C62828}
+.hidden{display:none}
+@keyframes pulse{50%{transform:scale(1.02)}}
+</style>
 </head>
 <body>
+<div class="container">
+  <div class="profile"><img src="차빈이.png" alt="차빈이" onerror="this.style.display='none'">🐰</div>
+  <div class="badge">✨ 차빈이 맞춤 영어 학습</div>
+  <h1>영어 척척박사 🎓</h1>
+  <p>영어가 있는 사진을 올리면 <b>영어 문장만</b> 골라서 연습해요.</p>
 
-    <div class="container">
-        <div class="chabin-profile">
-            <img src="차빈이.png" alt="차빈이" onerror="this.onerror=null; this.src='https://via.placeholder.com/120x120/FFB6C1/ffffff?text=Chabin';">
-        </div>
-        <div class="chabin-badge">✨ 차빈이 맞춤 학습 앱 ✨</div>
+  <div class="upload">
+    <input type="file" id="imageInput" accept="image/*">
+    <div id="loading">🔎 영어 글자를 찾는 중이에요…</div>
+    <div class="notice">사진 속 한글·그림·특수기호는 최대한 제외합니다. 사진이 선명하고 영어가 크게 보일수록 정확해요.</div>
+  </div>
 
-        <h1>차빈이의 영어 척척박사 🎓</h1>
-        <p>궁금한 영어 문장을 사진으로 찍어 올려봐!</p>
-        
-        <div class="upload-box">
-            <input type="file" id="imageInput" accept="image/*">
-            <div id="loading">토끼가 돋보기로 꼼꼼히 읽고 있어요... ⏳</div>
-        </div>
-        
-        <div id="resultArea"></div>
-    </div>
+  <div id="resultArea"></div>
+</div>
 
-    <script>
-        const imageInput = document.getElementById('imageInput');
-        const loading = document.getElementById('loading');
-        const resultArea = document.getElementById('resultArea');
-        let currentExtractedText = "";
+<script>
+const imageInput=document.getElementById('imageInput');
+const loading=document.getElementById('loading');
+const resultArea=document.getElementById('resultArea');
+let sentences=[];
+let currentSentenceIndex=0;
+let recognition=null;
+let isRecording=false;
+let finalTranscript='';
 
-        imageInput.addEventListener('change', async (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
+imageInput.addEventListener('change', async e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  resultArea.innerHTML='';
+  loading.style.display='block';
+  try{
+    const processed=await preprocessImage(file);
+    const worker=await Tesseract.createWorker('eng');
+    await worker.setParameters({
+      tessedit_pageseg_mode:Tesseract.PSM.AUTO,
+      preserve_interword_spaces:'1',
+      tessedit_char_whitelist:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?;:'\"-()"
+    });
+    const ret=await worker.recognize(processed);
+    await worker.terminate();
 
-            loading.style.display = 'block';
-            resultArea.innerHTML = '';
+    const raw=ret.data.text||'';
+    sentences=extractEnglishSentences(raw);
 
-            try {
-                const worker = await Tesseract.createWorker('eng+kor');
-                const ret = await worker.recognize(file);
-                await worker.terminate();
+    loading.style.display='none';
+    renderResults();
 
-                const rawText = ret.data.text;
-                loading.style.display = 'none';
+    if(!sentences.length){
+      resultArea.innerHTML='<div class="result"><p class="error">영어 문장을 찾지 못했어요.</p><p>① 영어가 크게 보이게 찍기 ② 한글/그림이 적은 부분만 잘라 올리기 ③ 사진을 똑바로 찍기를 해보세요.</p></div>';
+    }
+  }catch(err){
+    console.error(err);
+    loading.style.display='none';
+    resultArea.innerHTML='<div class="result"><p class="error">사진을 읽는 중 문제가 생겼어요.</p><p>사진을 다시 올려 주세요.</p></div>';
+  }
+});
 
-                let cleaned = rawText.replace(/[^\w\sㄱ-ㅎㅏ-ㅣ가-힣!?.,]/g, ' ');
-                cleaned = cleaned.replace(/[ \t]+/g, ' ').replace(/[\r\n]+/g, ' ').trim();
-                
-                currentExtractedText = cleaned;
-                
-                if (!currentExtractedText) {
-                    resultArea.innerHTML = '<p style="text-align:center;">글자를 찾지 못했어요. 사진을 다시 확인해볼까요?</p>';
-                    return;
-                }
+async function preprocessImage(file){
+  const img=new Image();
+  img.src=URL.createObjectURL(file);
+  await new Promise((res,rej)=>{img.onload=res;img.onerror=rej});
+  const max=1800, scale=Math.min(1,max/Math.max(img.width,img.height));
+  const c=document.createElement('canvas');
+  c.width=Math.round(img.width*scale); c.height=Math.round(img.height*scale);
+  const ctx=c.getContext('2d');
+  ctx.drawImage(img,0,0,c.width,c.height);
+  URL.revokeObjectURL(img.src);
+  return c;
+}
 
-                const words = currentExtractedText.split(/\s+/);
-                
-                let wordsHtml = words.map(word => {
-                    let pureWord = word.replace(/[^a-zA-Z]/g, '');
-                    return `<span class="word-btn" onclick="speakText('${pureWord || word}')">${word}</span>`;
-                }).join(' ');
+function cleanEnglishLine(line){
+  // 영어가 아닌 유니코드 문자 제거 + OCR에서 흔한 기호 정리
+  let s=line.replace(/[^A-Za-z0-9.,!?;:'"()\- ]/g,' ');
+  s=s.replace(/\s+/g,' ').trim();
+  // 영문자가 거의 없는 OCR 결과는 버림
+  const letters=(s.match(/[A-Za-z]/g)||[]).length;
+  const total=(s.match(/[A-Za-z0-9]/g)||[]).length;
+  if(letters<2 || (total>0 && letters/total<0.65)) return '';
+  // 숫자만 있는 조각은 제외
+  if(!/[A-Za-z]{2,}/.test(s)) return '';
+  return s;
+}
 
-                resultArea.innerHTML = `
-                    <div class="result-box">
-                        <strong>📖 읽어낸 내용 (단어를 콕 찍어봐요):</strong><br><br>
-                        <div style="line-height: 2.2;">${wordsHtml}</div>
-                        <button class="speak-all-btn" onclick="speakText('${currentExtractedText.replace(/'/g, "\\'")}')">🔊 전체 내용 듣기</button>
-                    </div>
+function extractEnglishSentences(raw){
+  const lines=raw.split(/\r?\n/).map(cleanEnglishLine).filter(Boolean);
+  const joined=lines.join(' ');
+  const chunks=joined.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[];
+  const out=[];
+  for(let s of chunks){
+    s=s.trim().replace(/\s+/g,' ');
+    // 너무 짧거나 영어 비중이 낮은 조각 제외
+    const words=s.match(/[A-Za-z]+(?:'[A-Za-z]+)?/g)||[];
+    if(words.length>=2) out.push(s);
+  }
+  return [...new Set(out)];
+}
 
-                    <div class="quiz-section">
-                        <strong>🎯 뜻 맞추기 퀴즈!</strong>
-                        <p style="margin: 8px 0 12px 0; font-size: 15px;">이 내용의 뜻이 무엇일까요? 버튼을 누르고 생각한 뜻을 말해보세요!</p>
-                        <button id="micBtn" class="quiz-btn" onclick="toggleRecord()">🎤 뜻 말하고 녹음하기</button>
-                        <div id="aiFeedbackArea"></div>
-                    </div>
-                `;
+function escapeHTML(s){
+  return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 
-            } catch (error) {
-                loading.style.display = 'none';
-                alert('글자를 읽는 중에 문제가 생겼어요!');
-                console.error(error);
-            }
-        });
+function renderResults(){
+  resultArea.innerHTML='<div class="result"><b>📖 찾은 영어 문장</b><div id="sentences"></div></div>';
+  const box=document.getElementById('sentences');
+  sentences.forEach((s,i)=>{
+    const div=document.createElement('div'); div.className='sentence';
+    div.innerHTML=`<b>문장 ${i+1}</b><br><div id="words-${i}"></div>
+      <button class="action listen" onclick="speakText(sentences[${i}])">🔊 이 문장 전체 듣기</button>
+      <button class="action" style="background:#7E57C2" onclick="startMeaningQuiz(${i})">🎯 이 문장의 뜻 말하기</button>`;
+    box.appendChild(div);
+    const wbox=div.querySelector(`#words-${i}`);
+    const words=s.match(/[A-Za-z]+(?:'[A-Za-z]+)?/g)||[];
+    words.forEach(w=>{
+      const b=document.createElement('button'); b.className='word'; b.textContent=w;
+      b.onclick=()=>showSyllables(b,w);
+      wbox.appendChild(b);
+    });
+  });
+}
 
-        function speakText(text) {
-            if (!('speechSynthesis' in window)) {
-                alert('이 브라우저는 음성 재생을 지원하지 않아요.');
-                return;
-            }
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-        }
+function showSyllables(button,word){
+  document.querySelectorAll('.syllables').forEach(x=>x.remove());
+  const box=document.createElement('div'); box.className='syllables';
+  const parts=roughSyllables(word);
+  box.innerHTML='<b>🔤 음절을 눌러 들어보세요:</b> ';
+  parts.forEach(p=>{
+    const b=document.createElement('button');b.className='syl';b.textContent=p;
+    b.onclick=()=>speakText(p); box.appendChild(b);
+  });
+  button.parentElement.parentElement.appendChild(box);
+}
 
-        let recognition;
-        let isRecording = false;
+function roughSyllables(word){
+  // 영어 음절을 사전 없이 100% 분리할 수는 없으므로 학습용 근사 분할
+  const w=word.toLowerCase();
+  if(w.length<=3)return [word];
+  const m=w.match(/[bcdfghjklmnpqrstvwxyz]*[aeiouy]+(?:[bcdfghjklmnpqrstvwxyz]+(?=[aeiouy]|$)|$)/gi);
+  if(!m||m.length<=1)return [word];
+  let pos=0;
+  return m.map(x=>{const original=word.slice(pos,pos+x.length);pos+=x.length;return original}).filter(Boolean);
+}
 
-        function toggleRecord() {
-            const micBtn = document.getElementById('micBtn');
-            const feedbackArea = document.getElementById('aiFeedbackArea');
+function speakText(text){
+  if(!('speechSynthesis' in window)){alert('이 브라우저는 음성 재생을 지원하지 않아요.');return}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US';u.rate=.85;
+  speechSynthesis.speak(u);
+}
 
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert('이 브라우저는 음성 인식을 지원하지 않아요. 크롬 브라우저를 이용해 주세요.');
-                return;
-            }
+function startMeaningQuiz(index){
+  currentSentenceIndex=index;
+  finalTranscript='';
+  const old=document.getElementById('quizBox');
+  if(old)old.remove();
 
-            if (!isRecording) {
-                recognition = new SpeechRecognition();
-                recognition.lang = 'ko-KR';
-                recognition.interimResults = false;
+  const q=document.createElement('div');q.id='quizBox';q.className='quiz';
+  q.innerHTML=`<b>🎯 뜻 맞추기</b>
+    <p>문장을 읽고, <b>무슨 뜻인지 네 말로 설명해 보세요.</b></p>
+    <div style="background:white;padding:10px;border-radius:10px"><b>${escapeHTML(sentences[index])}</b></div>
+    <button id="recordBtn" class="action record" onclick="toggleRecord()">🎤 녹음 시작</button>
+    <button id="stopBtn" class="action stop hidden" onclick="stopRecording()">⏹ 녹음 끝내기</button>
+    <div id="transcript" class="transcript">아직 녹음하지 않았어요.</div>
+    <button class="action" style="background:#00897B" onclick="evaluateMeaning()">🤖 AI에게 평가받기</button>
+    <div id="feedback" class="feedback hidden"></div>`;
+  resultArea.appendChild(q);
+  q.scrollIntoView({behavior:'smooth',block:'center'});
+}
 
-                recognition.onstart = function() {
-                    isRecording = true;
-                    micBtn.classList.add('recording');
-                    micBtn.innerText = '🔴 차빈이 목소리 듣고 있어요... 이야기해봐요!';
-                    feedbackArea.innerHTML = '';
-                };
+function toggleRecord(){
+  if(isRecording){stopRecording();return}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    document.getElementById('transcript').innerHTML='<span class="error">이 브라우저는 음성 인식을 지원하지 않아요. Chrome/Edge에서 사용해 주세요.</span>';
+    return;
+  }
+  recognition=new SR();
+  recognition.lang='ko-KR';
+  recognition.continuous=true;
+  recognition.interimResults=true;
+  finalTranscript='';
+  isRecording=true;
+  document.getElementById('recordBtn').textContent='🔴 녹음 중… (다시 누르면 종료)';
+  document.getElementById('recordBtn').classList.add('recording');
+  document.getElementById('stopBtn').classList.remove('hidden');
 
-                recognition.onresult = function(event) {
-                    const spokenText = event.results[0][0].transcript;
-                    evaluateAnswer(spokenText);
-                };
+  recognition.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      if(e.results[i].isFinal) finalTranscript+=t+' ';
+      else interim+=t;
+    }
+    document.getElementById('transcript').textContent=(finalTranscript+interim).trim()||'듣고 있어요…';
+  };
+  recognition.onerror=e=>{
+    console.error(e);
+    if(e.error!=='no-speech') document.getElementById('transcript').innerHTML='<span class="error">음성을 인식하지 못했어요. 다시 시도해 주세요.</span>';
+  };
+  recognition.onend=()=>{
+    if(isRecording){
+      // 일부 브라우저는 잠시 후 recognition을 자동 종료하므로 이어서 시작
+      try{recognition.start()}catch(_){}
+    }
+  };
+  try{recognition.start()}catch(e){console.error(e)}
+}
 
-                recognition.onerror = function(event) {
-                    console.error(event.error);
-                    stopRecordUI();
-                    feedbackArea.innerHTML = `<div class="ai-feedback">😅 목소리를 잘 못 들었어요. 마이크를 향해 다시 말씀해 주세요!</div>`;
-                };
+function stopRecording(){
+  isRecording=false;
+  if(recognition){try{recognition.stop()}catch(_){}}
+  const b=document.getElementById('recordBtn');
+  if(b){b.textContent='🎤 다시 녹음하기';b.classList.remove('recording')}
+  const s=document.getElementById('stopBtn');if(s)s.classList.add('hidden');
+}
 
-                recognition.onend = function() {
-                    stopRecordUI();
-                };
+async function evaluateMeaning(){
+  const feedback=document.getElementById('feedback');
+  const answer=(document.getElementById('transcript').textContent||'').trim();
+  const sentence=sentences[currentSentenceIndex];
+  if(!answer || answer==='아직 녹음하지 않았어요.' || answer==='듣고 있어요…'){
+    feedback.classList.remove('hidden');
+    feedback.innerHTML='🗣️ 먼저 녹음 버튼을 누르고 문장의 뜻을 말해 주세요.';
+    return;
+  }
 
-                recognition.start();
-            } else {
-                if (recognition) {
-                    recognition.stop();
-                }
-                stopRecordUI();
-            }
-        }
+  feedback.classList.remove('hidden');
+  feedback.innerHTML='🤖 문장의 뜻과 차빈이의 설명을 비교하고 있어요…';
 
-        function stopRecordUI() {
-            isRecording = false;
-            const micBtn = document.getElementById('micBtn');
-            if (micBtn) {
-                micBtn.classList.remove('recording');
-                micBtn.innerText = '🎤 뜻 말하고 녹음하기';
-            }
-        }
+  try{
+    const res=await fetch('/api/evaluate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({sentence,userAnswer:answer})
+    });
+    if(!res.ok)throw new Error('API unavailable');
+    const data=await res.json();
+    renderFeedback(data,answer);
+  }catch(err){
+    // API가 연결되지 않은 상태에서도 "무조건 잘했어요"라고 거짓 피드백하지 않음
+    feedback.innerHTML=`<b>🗣️ 차빈이가 말한 뜻</b><br>${escapeHTML(answer)}
+      <hr>
+      <b>⚠️ AI 평가 기능을 연결해야 해요.</b><br>
+      현재 HTML만 실행한 상태라서 문장의 정확한 뜻을 AI에게 물어볼 서버가 없습니다.
+      <div class="notice">/api/evaluate 서버를 OpenAI 등의 AI API와 연결하면
+      <b>정확한 뜻 → 차빈이 답변의 핵심 내용 비교 → 잘한 점 → 빠진 부분 → 쉬운 설명</b> 순서로 평가하도록 만들 수 있어요.</div>`;
+  }
+}
 
-        // 지능형 해석 매칭 함수
-        function evaluateAnswer(userAnswer) {
-            const feedbackArea = document.getElementById('aiFeedbackArea');
-            let isGood = userAnswer.length >= 2; 
-            
-            let textUpper = currentExtractedText.toUpperCase();
-            let koreanMeaning = "사진 속 문구의 전체적인 내용이에요!";
-
-            // 캡처에 나온 'Duck, Duck, Dinosaur' 책 문장들에 대한 맞춤 해석 매칭
-            if (textUpper.includes("FEATHER") || textUpper.includes("FLAP") || textUpper.includes("SPIKE")) {
-                koreanMeaning = "페더, 플랩, 그리고 그들의 형제 스파이크 이야기예요. '나는 완벽한 호박을 찾을 거야'라고 페더가 말해요.";
-            } else if (textUpper.includes("WOODEN SPOON")) {
-                koreanMeaning = "나무로 만든 숟가락(나무 숟가락)이라는 뜻이에요!";
-            } else {
-                koreanMeaning = "영어 단어들의 조합을 통해 멋진 뜻을 가진 문장이에요. 주어와 동사의 의미를 생각해보세요!";
-            }
-
-            feedbackArea.innerHTML = `
-                <div class="ai-feedback">
-                    <p style="margin: 0 0 8px 0; color: #00ACC1; font-weight: bold;">
-                        ${isGood ? '🐰✨ 차빈이 최고! 멋진 시도였어요!' : '🥕 아쉬워요! 조금 더 자신 있게 말해볼까요?'}
-                    </p>
-                    <p style="margin: 0 0 8px 0; color: #333;">
-                        🗣️ <b>차빈이가 말한 뜻:</b> "${userAnswer}"
-                    </p>
-                    <p style="margin: 0 0 8px 0; color: #E91E63;">
-                        📖 <b>알맞은 한국어 뜻:</b> "${koreanMeaning}"
-                    </p>
-                    <p style="margin: 0; color: #666; font-size: 15px;">
-                        💡 <b>토끼 선생님의 설명:</b><br>
-                        방금 읽은 문장 속 단어들이 어떤 상황인지 떠올려보면 뜻이 더 잘 이해될 거예요! 아주 잘하고 있어요!
-                    </p>
-                </div>
-            `;
-            
-            speakKorean(isGood ? "차빈이 참 잘했어요!" : "다시 한번 힘내서 이야기해 볼까요?");
-        }
-
-        function speakKorean(text) {
-            if (!('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ko-KR';
-            utterance.rate = 1.0;
-            window.speechSynthesis.speak(utterance);
-        }
-    </script>
-
+function renderFeedback(data,answer){
+  const feedback=document.getElementById('feedback');
+  feedback.innerHTML=`
+    <b>${escapeHTML(data.result||'평가 결과')}</b>
+    <p>🗣️ <b>차빈이가 말한 뜻</b><br>${escapeHTML(answer)}</p>
+    <p>📖 <b>문장의 정확한 뜻</b><br>${escapeHTML(data.correctMeaning||'')}</p>
+    <p>💡 <b>선생님 설명</b><br>${escapeHTML(data.explanation||'')}</p>
+    ${data.missingPoints?`<p>🔎 <b>빠진 내용</b><br>${escapeHTML(data.missingPoints)}</p>`:''}`;
+}
+</script>
 </body>
 </html>
